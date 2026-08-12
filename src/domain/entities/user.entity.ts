@@ -1,3 +1,6 @@
+/**
+ * Representa un usuario dentro del dominio de la aplicación.
+ */
 export class UserEntity {
   constructor(
     public id: string,
