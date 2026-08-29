@@ -1,11 +1,18 @@
-import { AuthDatasource, AuthRepository, RegisterUserDto, UserEntity,
+import {
+  AuthDatasource,
+  AuthRepository,
+  RegisterUserDto,
+  UserEntity,
+  LoginUserDto,
 } from "../../domain";
 
 export class AuthRepositoryImple implements AuthRepository {
-  constructor(
-    private readonly authDatasource: AuthDatasource
-  ) {}
-  
+  constructor(private readonly authDatasource: AuthDatasource) {}
+
+  login(loginUserDto: LoginUserDto): Promise<UserEntity> {
+    return this.authDatasource.login(loginUserDto);
+  }
+
   register(registerUserDto: RegisterUserDto): Promise<UserEntity> {
     return this.authDatasource.register(registerUserDto);
   }

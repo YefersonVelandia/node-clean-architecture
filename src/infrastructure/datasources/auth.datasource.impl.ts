@@ -3,6 +3,7 @@ import { BcryptAdapter } from "../../config/bcrypt";
 import {
   AuthDatasource,
   CustomError,
+  LoginUserDto,
   RegisterUserDto,
   UserEntity,
 } from "../../domain";
@@ -16,6 +17,25 @@ export class AuthDatasourceImpl implements AuthDatasource {
     private readonly hashPassword: HashFunction = BcryptAdapter.hash,
     private readonly comparePassword: CompareFunction = BcryptAdapter.compare,
   ) {}
+
+  async login(loginUserDto: LoginUserDto): Promise<any> {
+    const { email, password } = loginUserDto;
+
+    try {
+      // 1. Validar si existe usuario
+      const user = await UserModel.findOne({ email });
+      if (!user) throw CustomError.badRequest("User or password incorrect");
+
+      // 2. Comparar contraseña
+      const isMatch = this.comparePassword(password, user.password!);
+      if (!isMatch) throw CustomError.badRequest("User or password incorrect");
+
+      return UserMapper.userEntityFromObject(user);
+    } catch (error) {
+      console.log(error);
+      throw CustomError.internalServer();
+    }
+  }
 
   async register(registerUserDto: RegisterUserDto): Promise<UserEntity> {
     const { name, email, password } = registerUserDto;
